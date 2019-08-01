@@ -1,8 +1,13 @@
 #include "hotspot.h"
 #include "../../common/timer.h"
 
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
      #include "../../common/power_fpga.h"
+#endif
+*/
+#if defined(AOCL_BOARD_p385a_sch_ax115)
+     #include "../../common/pwr_temp_fpga.h"
 #endif
 
 cl_device_id *device_list;
@@ -102,7 +107,7 @@ int compute_tran_temp(cl_mem MatrixPower, cl_mem MatrixTemp[2], int col, int row
       #ifdef AOCL_BOARD_a10pl4_dd4gb_gx115
         power = GetPowerFPGA(&flag);
       #else
-        power = GetPowerFPGA(&flag, device_list);
+	monitor_and_finish(&flag, stdout);
       #endif
     }
     else
@@ -351,6 +356,7 @@ int compute_tran_temp(cl_mem MatrixPower, cl_mem MatrixTemp[2], int col, int row
   printf("\nComputation done in %0.3lf ms.\n", computeTime);
   printf("Throughput is %0.3lf GBps.\n", (3 * row * col * sizeof(float) * total_iterations) / (1000000000.0 * computeTime / 1000.0));
 
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
   energy = GetEnergyFPGA(power, computeTime);
   if (power != -1) // -1 --> sensor read failure
@@ -363,7 +369,7 @@ int compute_tran_temp(cl_mem MatrixPower, cl_mem MatrixTemp[2], int col, int row
     printf("Failed to read power values from the sensor!\n");
   }
 #endif
-
+*/
   return src;
 }
 

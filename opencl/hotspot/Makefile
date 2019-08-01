@@ -34,7 +34,7 @@ endif
 all: $(EXE)
 
 $(EXE): hotspot.c hotspot.h hotspot_common.h OpenCL_helper_library.c OpenCL_helper_library.h
-	$(CC) $(KERNEL_DIM) $(CFLAGS) -o $(EXE) $(OPENCL_INC) OpenCL_helper_library.c hotspot.c $(LDFLAGS) $(OPENCL_LIB)
+	$(CXX) $(KERNEL_DIM) $(CFLAGS) -o $(EXE) $(OPENCL_INC) OpenCL_helper_library.c hotspot.c $(LDFLAGS) $(OPENCL_LIB)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES)

@@ -5,10 +5,10 @@ export CL_CONTEXT_COMPILER_MODE_ALTERA=3
 runs=5
 iter=1000
 bench=hotspot
-version=7
+version=0
 input_size=15000
-folder=stratixv
-board=de5net_a7
+folder=./
+board=p385a_sch_ax115
 
 echo kernel | xargs printf "%-50s"
 echo freq | xargs printf "%-10s"
@@ -32,6 +32,7 @@ do
 	freq=`cat $folder/$name/acl_quartus_report.txt | grep Actual | cut -d " " -f 4`
 	
 	compute_bsize=$(($BSIZE - (2 * $TIME)))
+	echo $BSIZE
 	last_col=$(($input_size + $compute_bsize - $input_size % $compute_bsize))
 	
 	timesum=0
