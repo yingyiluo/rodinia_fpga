@@ -4,14 +4,14 @@
 	#ifdef AOCL_BOARD_de5net_a7
 		#define DIA_UNROLL	4
 	#else
-		#define DIA_UNROLL	2
+		#define DIA_UNROLL	4
 	#endif
 #endif
 #ifndef PERI_UNROLL
 	#ifdef AOCL_BOARD_de5net_a7
 		#define PERI_UNROLL	8
 	#else
-		#define PERI_UNROLL	4		
+		#define PERI_UNROLL	8		
 	#endif
 #endif
 #ifndef PERI_CU
@@ -25,7 +25,7 @@
 	#ifdef AOCL_BOARD_de5net_a7
 		#define INT_SIMD	2
 	#else
-		#define INT_SIMD	1
+		#define INT_SIMD	2
 	#endif
 #endif
 #ifndef INT_CU
