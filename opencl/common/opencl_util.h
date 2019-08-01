@@ -194,7 +194,8 @@ inline static void select_device_type(cl_platform_id* platforms, cl_uint* platfo
               dev_type_env);
     }
   }
-  select_device_interactive(platforms, platformCount, device_type);
+  //select_device_interactive(platforms, platformCount, device_type);
+  *device_type = CL_DEVICE_TYPE_ACCELERATOR;
 }
 
 // Validates device type selection and exports context properties
