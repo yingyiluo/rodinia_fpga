@@ -8,9 +8,15 @@
 #include "../../common/timer.h"
 #include <stdlib.h>
 
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	#include "../../common/power_fpga.h"
 #endif
+*/
+#if defined(AOCL_BOARD_p385a_sch_ax115)
+	#include "../../common/pwr_temp_fpga.h"
+#endif
+
 
 #ifndef DEVICE
 #define DEVICE CL_DEVICE_TYPE_DEFAULT
@@ -448,7 +454,8 @@ int main(int argc, char** argv)
       #ifdef AOCL_BOARD_a10pl4_dd4gb_gx115
         power = GetPowerFPGA(&flag);
       #else
-        power = GetPowerFPGA(&flag, device_list);
+        //power = GetPowerFPGA(&flag, device_list);
+        monitor_and_finish(&flag, stdout);
       #endif
     }
     else
@@ -528,6 +535,7 @@ int main(int argc, char** argv)
   double computeTime = TimeDiff(start, end);
   printf("Computation done in %0.3lf ms.\n", computeTime);
   printf("Throughput is %0.3lf GBps.\n", (3 * numCols * numRows * layers * sizeof(float) * iterations) / (1000000000.0 * computeTime / 1000.0));
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
   energy = GetEnergyFPGA(power, computeTime);
   if (power != -1) // -1 --> sensor read failure
@@ -540,6 +548,7 @@ int main(int argc, char** argv)
     printf("Failed to read power values from the sensor!\n");
   }
 #endif
+*/
 
 #ifdef VERIFY
   float* answer = (float*)calloc(size, sizeof(float));

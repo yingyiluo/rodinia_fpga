@@ -56,7 +56,7 @@ OUTPUT = *.txt
 EXTRA_FLAGS += -lm
 
 all: $(SRC) $(AOT_PROGRAMS)
-	$(CC) $(CFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
+	$(CXX) $(CFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES) $(OUTPUT)

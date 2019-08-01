@@ -51,10 +51,10 @@ endif
 all: $(EXE) $(AOT_PROGRAMS)
 
 $(EXE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) $(OPENCL_LIB) $(LDFLAGS)
+	$(CXX) $(CFLAGS) $(OBJECTS) $(OPENCL_LIB) $(LDFLAGS)
 
 %.o %.obj: %.c
-	$(CC) $(CFLAGS) -c $< 
+	$(CXX) $(CFLAGS) -c $< 
 
 clean:
 	$(RM) $(OBJECTS) $(EXE)

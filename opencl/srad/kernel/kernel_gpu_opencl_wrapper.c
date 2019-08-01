@@ -37,9 +37,16 @@
 #include "./../util/opencl/opencl.h"						// (in directory)
 #include "../../../common/timer.h"							// (in directory)
 #include "../../common/opencl_util.h"						// (in directory)
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	#include "../../../common/power_fpga.h"
 #endif
+*/
+
+#if defined(AOCL_BOARD_p385a_sch_ax115)
+	#include "../../../common/pwr_temp_fpga.h"
+#endif
+
 
 //======================================================================================================================================================150
 //	KERNEL_GPU_CUDA_WRAPPER FUNCTION HEADER
@@ -569,7 +576,9 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 			#ifdef AOCL_BOARD_a10pl4_dd4gb_gx115
 				*power = GetPowerFPGA(&flag);
 			#else
-				*power = GetPowerFPGA(&flag, devices);
+				//*power = GetPowerFPGA(&flag, devices);
+				*power = 0;
+				monitor_and_finish(&flag, stdout);
 			#endif
 		}
 		else

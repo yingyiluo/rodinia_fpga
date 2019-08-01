@@ -32,9 +32,17 @@
 #include "./util/graphics/resize.h"									// (in specified path)
 #include "../../common/timer.h"
 #include "../common/opencl_util.h"
+
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	#include "../../common/power_fpga.h"
 #endif
+
+/*
+#if defined(AOCL_BOARD_p385a_sch_ax115)
+	#include "../../common/pwr_temp_fpga.h"
+#endif
+*/
+
 //======================================================================================================================================================150
 //	KERNEL
 //======================================================================================================================================================150
@@ -270,6 +278,7 @@ int main(int argc, char* argv [])
 	printf("%.9f s, %.4f %% : FREE MEMORY\n", TimeDiff(time5, time6) / 1000.0, TimeDiff(time5, time6) / total_ms * 100);
 
 	printf("\nComputation done in %0.3lf ms.\n", computeTime);
+/*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	energy = GetEnergyFPGA(power, computeTime);
 	if (power != -1) // -1 --> failed to read energy values
@@ -278,6 +287,7 @@ int main(int argc, char* argv [])
 		printf("Average power consumption is %0.3lf watts.\n", power);
 	}
 #endif
+*/
 	printf("Total time: %.3lf ms\n", total_ms);
 	// The below value reflects only pure kernel execution time for all kernels in total
 //	printf("Total kernel execution time (including extract and compress kernels): %.9f s\n", kernelRunTime / 1000.0);
