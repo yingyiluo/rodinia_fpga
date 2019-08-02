@@ -10,11 +10,11 @@
 #endif
 
 #ifndef BLOCK_X
-	#define BLOCK_X 16
+	#define BLOCK_X 32
 #endif
 
 #ifndef BLOCK_Y
-	#define BLOCK_Y 16
+	#define BLOCK_Y 32
 #endif
 
 // Vector size

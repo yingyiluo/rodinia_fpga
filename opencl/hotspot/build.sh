@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-BOARD=de5net_a7
+BOARD=p385a_sch_ax115
 BG=""
 EMAIL=""
-VERSIONS="0 1 2 3 5 7 9 11"
+#VERSIONS="0 1 2 3 5 7 9 11"
+VERSIONS="1 2 3 4 5"
 BSIZE=""
 SIMD=""
 CUSIZE=""
