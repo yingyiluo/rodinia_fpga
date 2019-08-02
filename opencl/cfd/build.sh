@@ -3,7 +3,7 @@
 BOARD=p385a_sch_ax115
 BG=""
 EMAIL=""
-VERSIONS="0 1 2 3 5"
+VERSIONS="0 1 2 3 5 6 7 8"
 BSIZE=""
 SIMD=""
 CUSIZE=""
