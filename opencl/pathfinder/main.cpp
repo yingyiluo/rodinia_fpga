@@ -51,17 +51,19 @@ int   pyramid_height;
 FILE *resultFile;
 char* ofile = NULL;
 bool write_out = 0;
+int ITERATIONS;
 
 void init(int argc, char** argv)
 {
-	if (argc == 4 || argc == 5)
+	if (argc == 5 || argc == 6)
 	{
 		cols = atoi(argv[1]);
 		rows = atoi(argv[2]);
 		pyramid_height = atoi(argv[3]);
-		if (argc == 5)
+		ITERATIONS = atoi(argv[4]);
+		if (argc == 6)
 		{
-			ofile = argv[4];
+			ofile = argv[5];
 			write_out = 1;
 		}			
 	}
@@ -201,6 +203,7 @@ int main(int argc, char** argv)
 		{
 			#pragma omp barrier
 #endif
+			for(int iter = 0; iter < ITERATIONS; iter++) {
 			if (is_ndrange_kernel(version))
 			{
 				src = 1;
@@ -298,7 +301,7 @@ int main(int argc, char** argv)
 
 			clFinish(cl.command_queue);
 			GetTime(kernelEnd);
-
+			}
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 			flag = 1;
 		}
