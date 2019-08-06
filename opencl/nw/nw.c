@@ -179,6 +179,7 @@ int main(int argc, char **argv)
 	char *version_string;
 	int version_number;
 	size_t sourcesize;
+	int ITER;
 
 	// Timing and power measurement
 	TimeStamp compute_start, compute_end;
@@ -195,11 +196,12 @@ int main(int argc, char **argv)
 
 	int enable_traceback = 0;
 
-	if (argc >= 3)
+	if (argc >= 4)
 	{
 		max_rows = atoi(argv[1]);
 		max_cols = atoi(argv[1]);
 		penalty = atoi(argv[2]);
+		ITER = atoi(argv[3]);
 	}
 	else
 	{
@@ -207,9 +209,9 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	if (argc >= 4)
+	if (argc >= 5)
 	{
-		enable_traceback = atoi(argv[4]);
+		enable_traceback = atoi(argv[5]);
 	}
 	
 	// the lengths of the two sequences should be divisible by 16.
@@ -307,8 +309,12 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	// set global and local workitems
-	size_t local_work[3] = { (size_t)((workgroupsize>0)?workgroupsize:1), 1, 1 };
-	size_t global_work[3] = { (size_t)nworkitems, 1, 1 }; //nworkitems = no. of GPU threads
+	//size_t local_work[3] = { (size_t)((workgroupsize>0)?workgroupsize:1), 1, 1 };
+	//size_t global_work[3] = { (size_t)nworkitems, 1, 1 }; //nworkitems = no. of GPU threads
+	size_t local_work[2];
+	local_work[1] = 1; //{ (size_t)((workgroupsize>0)?workgroupsize:1), 1 };
+	size_t global_work[2];
+	global_work[1] = 1; //{ (size_t)nworkitems, 1}; //nworkitems = no. of GPU threads
 	
 	// OpenCL initialization
 	if(initialize())
@@ -463,29 +469,29 @@ int main(int argc, char **argv)
 #endif
 			// Beginning of timing point
 			GetTime(compute_start);
-
+			for(int iter = 0; iter < ITER; iter++) {
 			// NDRange versions
 			if (is_ndrange_kernel(version_number))
 			{
-				for(int blk = 1; blk <= worksize/BSIZE; blk++)
+				for(int blk = 1; blk < worksize/BSIZE; blk++)
 				{
-					global_work[0] = BSIZE * blk;
+					global_work[0] = BSIZE;// * blk;
 					local_work[0]  = BSIZE;
 
 					CL_SAFE_CALL( clSetKernelArg(kernel1, 4, sizeof(cl_int), (void*) &blk) );
-					CL_SAFE_CALL( clEnqueueNDRangeKernel(cmd_queue, kernel1, 2, NULL, global_work, local_work, 0, 0, NULL) );
+					CL_SAFE_CALL( clEnqueueNDRangeKernel(cmd_queue, kernel1, 1, NULL, global_work, local_work, 0, NULL, NULL) );
+					clFinish(cmd_queue);
 				}
-				clFinish(cmd_queue);
 				
 				for(int blk = worksize/BSIZE - 1; blk >= 1; blk--)
 				{
-					global_work[0] = BSIZE * blk;
+					global_work[0] = BSIZE;// * blk;
 					local_work[0]  = BSIZE;
 
 					CL_SAFE_CALL( clSetKernelArg(kernel2, 4, sizeof(cl_int), (void*) &blk) );
-					CL_SAFE_CALL( clEnqueueNDRangeKernel(cmd_queue, kernel2, 2, NULL, global_work, local_work, 0, 0, NULL) );
+					CL_SAFE_CALL( clEnqueueNDRangeKernel(cmd_queue, kernel2, 1, NULL, global_work, local_work, 0, NULL, NULL) );
+					clFinish(cmd_queue);
 				}
-				clFinish(cmd_queue);
 			}
 			else if (version_number < 5)
 			{
@@ -510,7 +516,7 @@ int main(int argc, char **argv)
 					clFinish(cmd_queue);
 				}
 			}
-
+			}
 			// End of timing point
 			GetTime(compute_end);
 
