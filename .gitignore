@@ -20,3 +20,7 @@ opencl/pathfinder/pathfinder
 opencl/srad/srad
 opencl/streamcluster/streamcluster
 data
+opencl/*/*.o
+opencl/*/*/*.o
+opencl/*/*/*/*.o
+opencl/*/*.out
