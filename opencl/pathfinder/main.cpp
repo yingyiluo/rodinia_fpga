@@ -20,6 +20,7 @@
 #include "pathfinder_common.h"
 
 #include "../common/opencl_util.h"
+#include "../common/debug.h"
 #include "../../common/timer.h"
 /*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
@@ -52,6 +53,11 @@ FILE *resultFile;
 char* ofile = NULL;
 bool write_out = 0;
 int ITERATIONS;
+
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 
 void init(int argc, char** argv)
 {
@@ -157,6 +163,9 @@ int main(int argc, char** argv)
 	// Create and build the kernel.
 	string kn = "dynproc_kernel";  // the kernel name, for future use.
 	cl.createKernel(kn);
+
+	//Initialize debug
+	init_debug(cl.ctxt(), cl.program, cl.devices[0], &debug_kernel, &debug_queue);
 
 	// Allocate device memory.
 	cl_mem d_gpuWall;
@@ -308,6 +317,12 @@ int main(int argc, char** argv)
 	}
 #endif
 
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(cl.ctxt(), cl.program, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
 	// Copy results back to host.
 	clEnqueueReadBuffer(cl.q(), d_gpuResult[dst], CL_TRUE, 0, sizeof(cl_int)*cols, result, 0, NULL, NULL);
 

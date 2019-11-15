@@ -1,4 +1,7 @@
 #include "pathfinder_common.h"
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
 
 #define IN_RANGE(x, min, max) ((x)>=(min) && (x)<=(max))
 #define CLAMP_RANGE(x, min, max) x = (x<(min)) ? min : ((x>(max)) ? max : x )
@@ -6,6 +9,7 @@
 
 #define HALO 1
 
+//__attribute__((reqd_work_group_size(BSIZE,1,1)))
 __kernel void dynproc_kernel (         int           iteration,
                               __global int* restrict gpuWall,
                               __global int* restrict gpuSrc,
@@ -16,6 +20,8 @@ __kernel void dynproc_kernel (         int           iteration,
 {
 	int bx = get_group_id(0);
 	int tx = get_local_id(0);
+	int gx = get_global_id(0);
+	monitor_ii_ndr_1(gx, 0);
 
 	// local buffers
 	__local int prev[BSIZE];

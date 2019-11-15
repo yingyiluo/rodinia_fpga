@@ -34,6 +34,7 @@ public:
 	void launch(string toLaunch, int version);
 	cl_command_queue        command_queue;
 	cl_device_id*           devices;
+	cl_program              program;
 //	size_t localSize();
 	
 private:
@@ -45,7 +46,6 @@ private:
 //	cl_device_id            device_id[100];
 	map<string, cl_kernel>  kernelArray;
 	cl_context              context;
-	cl_program              program;
 	
 	void getDevices();
 	void buildKernel(int version);

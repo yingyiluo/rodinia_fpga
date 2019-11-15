@@ -11,6 +11,8 @@ SRC = main.cpp OpenCL.cpp
 VERSIONS = 0 1 2 3 4 5 7 9
 KERNEL_NAMES = $(foreach var,$(VERSIONS),$(NAME)_kernel_v$(var))
 KERNEL_ALTERA_NAMES = $(addsuffix .aocx, $(KERNEL_NAMES))
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 
 ifdef BSIZE
 	CXXFLAGS += -DBSIZE=$(BSIZE)
@@ -31,7 +33,7 @@ else
 endif
 
 all: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(SRC) $(COMMON_SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS) $(LDFLAGS)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES)
