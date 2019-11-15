@@ -1,0 +1,6 @@
+timer library: counts the number of clock cycles. It can be invoked in OpenCL kernels via the function defined in timer.h 
+
+Refer to https://www.intel.com/content/www/us/en/programmable/documentation/mwh1391807965224.html#ewa1455918581924
+for more details on Intel FPGA SDK for OpenCL library feature.
+
+build the library: ./build.sh
