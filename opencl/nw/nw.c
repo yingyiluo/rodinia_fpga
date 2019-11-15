@@ -18,6 +18,7 @@
 #endif
 
 #include "../common/opencl_util.h"
+#include "../common/debug.h"
 #include "../../common/timer.h"
 
 /*
@@ -69,6 +70,11 @@ static cl_command_queue cmd_queue2;
 static cl_device_type   device_type;
 static cl_device_id   * device_list;
 static cl_int           num_devices;
+
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 
 static int initialize()
 {
@@ -346,6 +352,9 @@ int main(int argc, char **argv)
 	   
 	clBuildProgram_SAFE(prog, num_devices, device_list, clOptions, NULL, NULL);
 
+	//Initialize debug
+	init_debug(context, prog, device_list[0], &debug_kernel, &debug_queue);
+
 	cl_kernel kernel1;
 	cl_kernel kernel2;
 	kernel1 = clCreateKernel(prog, kernel_nw1, &err);
@@ -525,6 +534,14 @@ int main(int argc, char **argv)
 		}
 	}
 #endif
+
+       
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, prog, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
 
 	err = clEnqueueReadBuffer(cmd_queue, input_itemsets_d, 1, 0, ref_size * sizeof(int), output_itemsets, 0, 0, 0);
 	clFinish(cmd_queue);

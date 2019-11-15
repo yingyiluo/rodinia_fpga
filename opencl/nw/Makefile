@@ -2,6 +2,8 @@ include ../../common/make.config
 
 MAIN = nw
 KERNEL = $(MAIN)_kernel
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 
 ifeq ($(OS),Windows_NT)
 	EXE = $(MAIN).exe
@@ -22,13 +24,13 @@ ifdef NO_INTERLEAVE
 endif
 
 all: $(MAIN).c 
-	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE)
+	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE)
 	
 verify: $(MAIN).c 
-	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE) -DVERIFY
+	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE) -DVERIFY
 
 trace: $(MAIN).c
-	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE) -DTRACEBACK
+	$(CXX) ${KERNEL_DIM} $(CXXFLAGS) $(MAIN).c $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) -o $(EXE) -DTRACEBACK
 
 ifndef HOST_ONLY
 all: kernel
