@@ -312,7 +312,7 @@ int main(int argc, char** argv)
   clBuildProgram_SAFE(program, num_devices, device_list, NULL, NULL, NULL);
 
   //Initialize debug
-  init_debug(context, prog, device_list[0], &debug_kernel, &debug_queue);
+  init_debug(context, program, device_list[0], &debug_kernel, &debug_queue);
 
   if (version >= 7)
   {
@@ -537,7 +537,7 @@ int main(int argc, char** argv)
 #if NUM_II > 0
         //Read timer output from device
         printf("Read II\n");
-        read_ii_ms_all_buffers(context, prog, debug_kernel, debug_queue, II, &ii_info);
+        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
         print_ii_ms(II, ii_info);
 #endif //NUM_II
 

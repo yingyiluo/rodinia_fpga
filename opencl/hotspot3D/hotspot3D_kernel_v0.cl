@@ -45,8 +45,8 @@ __kernel void hotspotOpt1(__global float* restrict p,
   S += xy;
 
   for (int k = 1; k < nz-1; ++k) {
-      // ii
-      monitor_ii_3(buf, i, j, k, nx, ny);
+      // ii, order of i j k/nx, ny, nz
+      monitor_ii_3(buf, k, j, i ny, nx);
 
       temp1 = temp2;
       temp2 = temp3;
@@ -56,14 +56,14 @@ __kernel void hotspotOpt1(__global float* restrict p,
         + cw * tIn[W] + ct * temp3 + cb * temp1 + sdc * p[c] + ct * AMB_TEMP;
 
       // ms: unsure of value for ftime_t, dummy value?
-      monitor_ms_3(msbuf1, i, j, k, nx, ny, (ftime_t)temp1);
+      monitor_ms_3(msbuf1, k, j, i, ny, nx, (ftime_t)temp1);
 
       tOut[c] = temp;
       
-      monitor_ms_3(msbuf2, i, j, k, nx, ny, (ftime_t)temp2);
+      monitor_ms_3(msbuf2, k, j, i, ny, nx, (ftime_t)temp2);
 
       // st
-      monitor_st_3(stbuf, i, j, k, nx, ny, temp);
+      monitor_st_3(stbuf, k, j, i ny, nx, temp);
 
       c += xy;
       W += xy;

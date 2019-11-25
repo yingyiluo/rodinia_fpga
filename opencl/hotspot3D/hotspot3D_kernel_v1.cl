@@ -1,5 +1,5 @@
 #include "hotspot3D_common.h"
-#include "../timer/timer.h"
+#include "timer.h"
 #include "debug_defines.h"
 #include "../common/debug/manager.cl"
 
@@ -42,7 +42,7 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
 				int b = (z == 0) ? c : c - nx * ny;
 				int t = (z == nz - 1) ? c : c + nx * ny;
 
-                                temp = tIn[c]*cc + tIn[n]*cn + tIn[s]*cs + tIn[e]*ce + tIn[w]*cw + tIn[t]*ct + tIn[b]*cb + sdc * pIn[c] + ct*AMB_TEMP;
+                                float temp = tIn[c]*cc + tIn[n]*cn + tIn[s]*cs + tIn[e]*ce + tIn[w]*cw + tIn[t]*ct + tIn[b]*cb + sdc * pIn[c] + ct*AMB_TEMP;
 				
 				// ms
 				monitor_ms_3(msbuf1, z, y, x, ny, nx, (ftime_t)c);
