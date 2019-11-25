@@ -1,5 +1,8 @@
 include ../../common/make.config
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
+
 NAME = hotspot3D
 ifeq ($(OS),Windows_NT)
 	EXE = $(NAME).exe
@@ -56,7 +59,7 @@ OUTPUT = *.txt
 EXTRA_FLAGS += -lm
 
 all: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
+	$(CXX) $(CFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES) $(OUTPUT)

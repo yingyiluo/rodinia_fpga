@@ -17,6 +17,7 @@
 	#include "../../common/pwr_temp_fpga.h"
 #endif
 
+#include "../common/debug.h"
 
 #ifndef DEVICE
 #define DEVICE CL_DEVICE_TYPE_DEFAULT
@@ -180,6 +181,12 @@ int main(int argc, char** argv)
   cl_kernel        WriteKernel = NULL;
   cl_device_type   device_type;
 
+  //Debug Interface
+  cl_kernel*        debug_kernel;
+  cl_command_queue* debug_queue;
+  stamp_t*          ii_info;
+
+
 #ifdef EMULATOR
   cl_command_queue command_queue3 = NULL;
   cl_kernel        ComputeKernel = NULL;
@@ -303,6 +310,9 @@ int main(int argc, char** argv)
     }
 
   clBuildProgram_SAFE(program, num_devices, device_list, NULL, NULL, NULL);
+
+  //Initialize debug
+  init_debug(context, prog, device_list[0], &debug_kernel, &debug_queue);
 
   if (version >= 7)
   {
@@ -523,6 +533,14 @@ int main(int argc, char** argv)
     }
   }
 #endif
+
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, prog, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
+
 
   // pointers are always swapped one extra time at the end of the iteration loop and hence, d_a points to the output, not d_c
   err = clEnqueueReadBuffer( command_queue, d_a, CL_TRUE, 0, sizeof(float) * count, tempOut, 0, NULL, NULL );
