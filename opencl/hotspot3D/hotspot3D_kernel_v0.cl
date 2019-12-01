@@ -1,5 +1,5 @@
 #include "hotspot3D_common.h"
-#include "../timer/timer.h"
+#include "timer.h"
 #include "debug_defines.h"
 #include "../common/debug/manager.cl"
 
@@ -46,24 +46,24 @@ __kernel void hotspotOpt1(__global float* restrict p,
 
   for (int k = 1; k < nz-1; ++k) {
       // ii, order of i j k/nx, ny, nz
-      monitor_ii_3(buf, k, j, i ny, nx);
+      monitor_ii_3(buf, i, j, (k - 1), nx, ny);
 
       temp1 = temp2;
       temp2 = temp3;
       temp3 = tIn[c+xy];
       
-      temp = cc * temp2 + cn * tIn[N] + cs * tIn[S] + ce * tIn[E]
+      float temp = cc * temp2 + cn * tIn[N] + cs * tIn[S] + ce * tIn[E]
         + cw * tIn[W] + ct * temp3 + cb * temp1 + sdc * p[c] + ct * AMB_TEMP;
 
       // ms: unsure of value for ftime_t, dummy value?
-      monitor_ms_3(msbuf1, k, j, i, ny, nx, (ftime_t)temp1);
+      monitor_ms_3(msbuf1, i, j, (k - 1), nx, ny, (ftime_t)temp1);
 
       tOut[c] = temp;
       
-      monitor_ms_3(msbuf2, k, j, i, ny, nx, (ftime_t)temp2);
+      monitor_ms_3(msbuf2, i, j, (k - 1), nx, ny, (ftime_t)temp2);
 
       // st
-      monitor_st_3(stbuf, k, j, i ny, nx, temp);
+      monitor_st_3(stbuf, i, j, (k - 1), nx, ny, temp);
 
       c += xy;
       W += xy;
@@ -83,5 +83,3 @@ __kernel void hotspotOpt1(__global float* restrict p,
 
   return;
 }
-
-

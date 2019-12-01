@@ -1,4 +1,7 @@
 #include "hotspot3D_common.h"
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
 
 #ifndef SSIZE
 	#define SSIZE 4
@@ -20,6 +23,11 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
                                    float           cb, 
                                    float           cc)
 {
+	__local stamp_t buf[SIZE_II];
+	__local stamp_t msbuf1[SIZE_MS];
+	__local stamp_t msbuf2[SIZE_MS];
+	__local signal_t stbuf[SIZE_ST];
+
 	for(int z = 0; z < nz; z++)
 	{
 		for(int y = 0; y < ny; y++)
@@ -27,6 +35,9 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
 			#pragma unroll SSIZE
 			for(int x = 0; x < nx; x++)
 			{
+				// ii
+				monitor_ii_3(buf, z, y, x, ny, nx);
+
 				int index = x + y * nx + z * nx * ny;
 				float c = tIn[index];
 
@@ -37,8 +48,21 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
 				float b = (z == 0)      ? c : tIn[index - nx * ny];
 				float t = (z == nz - 1) ? c : tIn[index + nx * ny];
 
-				tOut[index] = c * cc + n * cn + s * cs + e * ce + w * cw + t * ct + b * cb + sdc * pIn[index] + ct * AMB_TEMP;
+				float temp =  c * cc + n * cn + s * cs + e * ce + w * cw + t * ct + b * cb + sdc * pIn[index] + ct * AMB_TEMP;
+
+				// ms
+				monitor_ms_3(msbuf1, z, y, x, ny, nx, (ftime_t)c);
+
+				tOut[index] = temp;
+
+				monitor_ms_3(msbuf2, z, y, x, ny, nx, (ftime_t)c);
+
+				// st
+				monitor_st_3(stbuf, z, y, x, ny, nx, temp);
 			}
 		}
 	}
+	finish_monitor_ii(buf, 0);
+	finish_monitor_ms_2(msbuf1, msbuf2, 0);
+	finish_monitor_st(stbuf, 0);
 }
