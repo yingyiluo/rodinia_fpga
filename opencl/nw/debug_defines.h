@@ -28,7 +28,6 @@ typedef double data_t;
 #define SIZE_CF 2048
 #define MASK_CF 0x7ff
 
-
 typedef enum {
     II,
     MS,
@@ -40,11 +39,18 @@ typedef TIME_TYPE ftime_t;
 
 typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
     ftime_t      time;
+    int          index;
+} stamp_t;
+
+typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
+    ftime_t      time;
     data_t       data;
+    int          index;   
 } signal_t;
 
 typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
     ftime_t      time;
     int          depth;
+//    int          index;
 } channel_t;
 #endif //DEBUG_DEFINES__H
