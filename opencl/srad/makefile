@@ -1,5 +1,7 @@
 include ../../common/make.config
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 CFLAGS += $(OPENCL_INC) $(KERNEL_DIM) -fopenmp
 SOURCES=main.c kernel/kernel_gpu_opencl_wrapper.c util/graphics/graphics.c util/graphics/resize.c util/opencl/opencl.c
 
@@ -51,7 +53,7 @@ endif
 all: $(EXE) $(AOT_PROGRAMS)
 
 $(EXE): $(OBJECTS)
-	$(CXX) $(CFLAGS) $(OBJECTS) $(OPENCL_LIB) $(LDFLAGS)
+	$(CXX) $(CFLAGS) $(OBJECTS) $(COMMON_SRC) $(OPENCL_LIB) $(LDFLAGS)
 
 %.o %.obj: %.c
 	$(CXX) $(CFLAGS) -c $< 
