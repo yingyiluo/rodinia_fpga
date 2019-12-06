@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
   context = cl_init_context(platform,device,quiet);
   size_t size;
   CL_SAFE_CALL( clGetContextInfo( context, CL_CONTEXT_DEVICES, 0, NULL, &size ) );
-  cl_uint numDevices = (int) (size / sizeof(cl_device_id));
   devices = (cl_device_id *)malloc(size);
   CL_SAFE_CALL( clGetContextInfo( context, CL_CONTEXT_DEVICES, size, devices, NULL ) );
   
