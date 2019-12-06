@@ -1,3 +1,6 @@
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
 #include "hotspot_common.h"
 
 __kernel void hotspot(__global float* restrict power,		//power input
@@ -15,12 +18,14 @@ __kernel void hotspot(__global float* restrict power,		//power input
 	float Rx_1 = 1 / Rx;
 	float Ry_1 = 1 / Ry;
 	float Rz_1 = 1 / Rz;
+	__local stamp_t buf[SIZE_II];
 
 	for (int r = 0; r < grid_rows; ++r)
 	{        
 		for (int c = 0; c < grid_cols; ++c)
 		{
 			int index = c + r * grid_cols;
+			monitor_ii_1(buf, index);
 			int offset_n = (r == grid_rows - 1) ? 0 : grid_cols;
 			int offset_s = (r ==      0       ) ? 0 : -grid_cols;
 			int offset_e = (c == grid_cols - 1) ? 0 : 1;
@@ -36,4 +41,5 @@ __kernel void hotspot(__global float* restrict power,		//power input
 			temp_dst[index] = temp_src[index] + delta;
 		}
 	}
+	finish_monitor_ii(buf, 0);
 }

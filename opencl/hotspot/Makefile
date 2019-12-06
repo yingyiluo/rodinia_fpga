@@ -1,5 +1,7 @@
 include ../../common/make.config
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 MAIN = hotspot
 KERNEL = $(MAIN)_kernel
 
@@ -34,7 +36,7 @@ endif
 all: $(EXE)
 
 $(EXE): hotspot.c hotspot.h hotspot_common.h OpenCL_helper_library.c OpenCL_helper_library.h
-	$(CXX) $(KERNEL_DIM) $(CFLAGS) -o $(EXE) $(OPENCL_INC) OpenCL_helper_library.c hotspot.c $(LDFLAGS) $(OPENCL_LIB)
+	$(CXX) $(KERNEL_DIM) $(CFLAGS) $(COMMON_SRC) -o $(EXE) $(OPENCL_INC) OpenCL_helper_library.c hotspot.c $(LDFLAGS) $(OPENCL_LIB)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES)
