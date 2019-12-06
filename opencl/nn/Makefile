@@ -1,5 +1,7 @@
 include ../../common/make.config
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 NAME = nn
 ifeq ($(OS),Windows_NT)
 	EXE = $(NAME).exe
@@ -31,7 +33,7 @@ else
 endif
 
 release: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
+	$(CXX) $(CXXFLAGS) $(SRC) $(COMMON_SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
 
 clean: 
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES)
