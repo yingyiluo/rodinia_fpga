@@ -37,6 +37,8 @@
 #include "./../util/opencl/opencl.h"						// (in directory)
 #include "../../../common/timer.h"							// (in directory)
 #include "../../common/opencl_util.h"						// (in directory)
+#include "../../common/debug.h"
+
 /*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	#include "../../../common/power_fpga.h"
@@ -115,6 +117,10 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 	
 	TimeStamp start[3], end[3];
 
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 	cl_platform_id *platforms = NULL;
 	cl_context_properties context_properties[3];
 	cl_device_type device_type;
@@ -205,6 +211,8 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 	clBuildProgram_SAFE(program, 1, &device, clOptions, NULL, NULL);
 
 #endif // USE_JIT
+	//Initialize debug
+	init_debug(context, program, device, &debug_kernel, &debug_queue);
 
 	//====================================================================================================100
 	//	CREATE Kernels
@@ -748,6 +756,13 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 		}
 	}
 #endif
+
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
 
 	//======================================================================================================================================================150
 	// 	COPY RESULTS BACK TO CPU

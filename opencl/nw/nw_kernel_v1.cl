@@ -21,7 +21,7 @@ __kernel void nw_kernel1(__global int* restrict reference,
                                   int           dim,
                                   int           penalty)
 {
-	__local ftime_t buf[SIZE_II];
+	__local stamp_t buf[SIZE_II];
 	int tmp = dim - 2;
 	for (int j = 1; j < dim - 1; ++j)
 	{

@@ -1,5 +1,6 @@
 #include "hotspot.h"
 #include "../../common/timer.h"
+#include "../common/debug.h"
 
 /*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
@@ -11,6 +12,12 @@
 #endif
 
 cl_device_id *device_list;
+cl_program program;
+
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 
 void writeoutput(float *vect, int grid_rows, int grid_cols, char *file) {
 
@@ -352,6 +359,13 @@ int compute_tran_temp(cl_mem MatrixPower, cl_mem MatrixTemp[2], int col, int row
   }
 #endif
 
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
+
   computeTime = TimeDiff(compute_start, compute_end);
   printf("\nComputation done in %0.3lf ms.\n", computeTime);
   printf("Throughput is %0.3lf GBps.\n", (3 * row * col * sizeof(float) * total_iterations) / (1000000000.0 * computeTime / 1000.0));
@@ -510,11 +524,14 @@ int main(int argc, char** argv) {
   char *source = read_kernel(kernel_file_path, &sourceSize);
 
 #ifdef USE_JIT
-  cl_program program = clCreateProgramWithSource(context, 1, (const char**)&source, NULL, &error);
+  program = clCreateProgramWithSource(context, 1, (const char**)&source, NULL, &error);
 #else
-  cl_program program = clCreateProgramWithBinary(context, 1, device_list, &sourceSize, (const unsigned char**)&source, NULL, &error);
+  program = clCreateProgramWithBinary(context, 1, device_list, &sourceSize, (const unsigned char**)&source, NULL, &error);
 #endif
   if (error != CL_SUCCESS) fatal_CL(error, __LINE__);
+
+  //Initialize debug
+  init_debug(context, program, device, &debug_kernel, &debug_queue);
 
   char clOptions[110];
   sprintf(clOptions, "-I.");

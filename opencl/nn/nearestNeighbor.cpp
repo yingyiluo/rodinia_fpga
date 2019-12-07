@@ -5,9 +5,17 @@
 #include "../../common/timer.h"
 #include "../common/opencl_timer.h"
 #include "../common/opencl_util.h"
+#include "../common/debug.h"
 
 cl_context context=NULL;
+cl_device_id* devices;
 int version;
+int device=-1;
+
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 
 int main(int argc, char *argv[]) {
   std::vector<Record> records;
@@ -19,7 +27,7 @@ int main(int argc, char *argv[]) {
   
   // args
   char filename[100];
-  int resultsCount=10, quiet=0, timing=1, platform=-1, device=-1;
+  int resultsCount=10, quiet=0, timing=1, platform=-1;
   float lat=0.0, lng=0.0;
   
   init_fpga(&argc, &argv, &version);
@@ -45,6 +53,10 @@ int main(int argc, char *argv[]) {
   if (resultsCount > numRecords) resultsCount = numRecords;
 
   context = cl_init_context(platform,device,quiet);
+  size_t size;
+  CL_SAFE_CALL( clGetContextInfo( context, CL_CONTEXT_DEVICES, 0, NULL, &size ) );
+  devices = (cl_device_id *)malloc(size);
+  CL_SAFE_CALL( clGetContextInfo( context, CL_CONTEXT_DEVICES, size, devices, NULL ) );
   
   recordDistances = OpenClFindNearestNeighbors(context,numRecords,locations,lat,lng,timing);
 
@@ -80,6 +92,9 @@ float *OpenClFindNearestNeighbors(
 	cl_NN_program = cl_compileProgram(kernel_file_path, NULL);
 #endif
        
+        //Initialize debug
+        init_debug(context, cl_NN_program, devices[0], &debug_kernel, &debug_queue);
+
 	NN_kernel = clCreateKernel(cl_NN_program, "NearestNeighbor", &status);
 	status = cl_errChk(status, (char *)"Error Creating Nearest Neighbor kernel",true);
 	if(status)exit(1);
@@ -167,6 +182,12 @@ float *OpenClFindNearestNeighbors(
     cl_errChk(error,"ERROR with clEnqueueReadBuffer",true);
     if (timing) {
         clFinish(command_queue);
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, cl_NN_program, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
         CLTimeStamp eventStart, eventEnd;
 	double totalTime = 0;
 
