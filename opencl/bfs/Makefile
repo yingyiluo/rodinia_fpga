@@ -1,5 +1,8 @@
 include ../../common/make.config
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
+
 NAME = bfs
 ifeq ($(OS),Windows_NT)
 	EXE = $(NAME).exe
@@ -35,16 +38,16 @@ else
 endif
 
 release: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS)
 
 ptx: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) -D PTX_MSG
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) -D PTX_MSG
 
 res: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) -D RES_MSG
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) -D RES_MSG
 
 debug: $(SRC) $(AOT_PROGRAMS)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) 
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRAFLAGS) 
 
 run:
 	./$(EXE)

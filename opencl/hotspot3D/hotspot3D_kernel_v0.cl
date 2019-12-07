@@ -19,9 +19,9 @@ __kernel void hotspotOpt1(__global float* restrict p,
                                    float           cc)
 {
   __local stamp_t buf[SIZE_II];
-  __local stamp_t msbuf1[SIZE_MS];
-  __local stamp_t msbuf2[SIZE_MS];
-  __local signal_t stbuf[SIZE_ST];
+  // __local stamp_t msbuf1[SIZE_MS];
+  // __local stamp_t msbuf2[SIZE_MS];
+  // __local signal_t stbuf[SIZE_ST];
 
   int i = get_global_id(0);
   int j = get_global_id(1);
@@ -46,7 +46,7 @@ __kernel void hotspotOpt1(__global float* restrict p,
 
   for (int k = 1; k < nz-1; ++k) {
       // ii, order of i j k/nx, ny, nz
-      monitor_ii_3(buf, i, j, (k - 1), nx, ny);
+      monitor_ii_3(buf, i, j, (k - 1), ny, (nz-2));
 
       temp1 = temp2;
       temp2 = temp3;
@@ -56,14 +56,14 @@ __kernel void hotspotOpt1(__global float* restrict p,
         + cw * tIn[W] + ct * temp3 + cb * temp1 + sdc * p[c] + ct * AMB_TEMP;
 
       // ms: unsure of value for ftime_t, dummy value?
-      monitor_ms_3(msbuf1, i, j, (k - 1), nx, ny, (ftime_t)temp1);
+      // monitor_ms_3(msbuf1, i, j, (k - 1), nx, ny, (ftime_t)temp1);
 
       tOut[c] = temp;
       
-      monitor_ms_3(msbuf2, i, j, (k - 1), nx, ny, (ftime_t)temp2);
+      // monitor_ms_3(msbuf2, i, j, (k - 1), nx, ny, (ftime_t)temp2);
 
       // st
-      monitor_st_3(stbuf, i, j, (k - 1), nx, ny, temp);
+      // monitor_st_3(stbuf, i, j, (k - 1), nx, ny, temp);
 
       c += xy;
       W += xy;
@@ -78,8 +78,8 @@ __kernel void hotspotOpt1(__global float* restrict p,
   
   // finish monitor stuff, above has another save in tOut?
   finish_monitor_ii(buf, 0);
-  finish_monitor_ms_2(msbuf1, msbuf2, 0);
-  finish_monitor_st(stbuf, 0);
+  // finish_monitor_ms_2(msbuf1, msbuf2, 0);
+  // finish_monitor_st(stbuf, 0);
 
   return;
 }

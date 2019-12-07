@@ -1,4 +1,9 @@
 #pragma OPENCL EXTENSION cl_khr_byte_addressable_store: enable
+
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
+
 //Structure to hold a node information
 typedef struct{
 	int starting;
@@ -15,13 +20,21 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 		             const int            no_of_nodes)
 {
 	#pragma unroll 7
+	__local ftime_t buf[SIZE_II];
 	for (int tid=0; tid<no_of_nodes; tid++)
 	{
 		if(g_graph_mask[tid])
 		{
 			g_graph_mask[tid]=false;
-			for(int i=g_graph_nodes[tid].starting; i<(g_graph_nodes[tid].no_of_edges + g_graph_nodes[tid].starting); i++)
+
+			temp = g_graph_nodes[tid].starting;
+			temp2 = g_graph_nodes[tid].no_of_edges;
+
+			for(int i=temp; i<(temp + temp2); i++)
 			{
+				// ii
+				monitor_ii_2(buf, tid, (i - temp), temp2);
+
 				int id = g_graph_edges[i];
 				if(!g_graph_visited[id])
 				{
@@ -31,6 +44,7 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 			}
 		}
 	}
+	finish_monitor_ii(buf, 0);
 }
 
 //--5 parameters
@@ -41,8 +55,12 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 		             const int          no_of_nodes)
 {
 	#pragma unroll 64
+	__local ftime_t buf[SIZE_II];
 	for (int tid=0; tid<no_of_nodes; tid++)
 	{
+		//ii
+		monitor_ii_1(buf, tid);
+
 		if(g_updating_graph_mask[tid])
 		{
 			g_graph_mask[tid]=true;
@@ -51,4 +69,5 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 			g_updating_graph_mask[tid]=false;
 		}
 	}
+	finish_monitor_ii(buf, 0);
 }

@@ -20,9 +20,9 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
                                    float           cc)
 {
 	__local stamp_t buf[SIZE_II];
-	__local stamp_t msbuf1[SIZE_MS];
-	__local stamp_t msbuf2[SIZE_MS];
-	__local signal_t stbuf[SIZE_ST];
+	// __local stamp_t msbuf1[SIZE_MS];
+	// __local stamp_t msbuf2[SIZE_MS];
+	// __local signal_t stbuf[SIZE_ST];
 
 	for(int z = 0; z < nz; z++)
 	{
@@ -45,19 +45,19 @@ __kernel void hotspotOpt1(__global float* restrict pIn,
                                 float temp = tIn[c]*cc + tIn[n]*cn + tIn[s]*cs + tIn[e]*ce + tIn[w]*cw + tIn[t]*ct + tIn[b]*cb + sdc * pIn[c] + ct*AMB_TEMP;
 				
 				// ms
-				monitor_ms_3(msbuf1, z, y, x, ny, nx, (ftime_t)c);
+				// monitor_ms_3(msbuf1, z, y, x, ny, nx, (ftime_t)c);
 
 				tOut[c] = temp;
 				
-				monitor_ms_3(msbuf2, z, y, x, ny, nx, (ftime_t)c);		
+				// monitor_ms_3(msbuf2, z, y, x, ny, nx, (ftime_t)c);		
 	
 				// st
-				monitor_st_3(stbuf, z, y, x, ny, nx, temp);
+				// monitor_st_3(stbuf, z, y, x, ny, nx, temp);
 
 			}
 		}
 	}
 	finish_monitor_ii(buf, 0);
-	finish_monitor_ms_2(msbuf1, msbuf2, 0);
-	finish_monitor_st(stbuf, 0);
+	// finish_monitor_ms_2(msbuf1, msbuf2, 0);
+	// finish_monitor_st(stbuf, 0);
 }
