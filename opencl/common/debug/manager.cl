@@ -41,7 +41,7 @@ inline void monitor_ii_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
 
 inline void finish_monitor_ii(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_II; i++) {
-    write_channel_altera(ii_chan[id], buf[i]);  
+    write_channel_nb_altera(ii_chan[id], buf[i]);  
   }
 }
 
@@ -77,7 +77,7 @@ inline void monitor_ms_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
 
 inline void finish_monitor_ms(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_MS; i++) {
-    write_channel_altera(ms_chan[id], buf[i]);  
+    write_channel_nb_altera(ms_chan[id], buf[i]);  
   }
 }
 
@@ -86,7 +86,7 @@ inline void finish_monitor_ms_2(__local stamp_t* buf1, __local stamp_t* buf2, in
     stamp_t tmp;
     tmp.time = buf2[i].time - buf1[i].time;
     tmp.index = buf1[i].index;
-    write_channel_altera(ms_chan[id], tmp);  
+    write_channel_nb_altera(ms_chan[id], tmp);  
   }
 }
 #endif
@@ -117,7 +117,7 @@ inline void monitor_st_3(__local signal_t* buf, int i, int j, int k, int sj, int
 
 inline void finish_monitor_st(__local signal_t* buf, int id) {
   for(int i = 0; i < SIZE_ST; i++) {
-    write_channel_altera(st_chan[id], buf[i]);  
+    write_channel_nb_altera(st_chan[id], buf[i]);  
   }
 }
 #endif
