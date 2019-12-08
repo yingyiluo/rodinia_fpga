@@ -16,6 +16,7 @@
 #include <fstream>
 #include <string>
 #include "../common/opencl_util.h"
+#include "../common/debug.h"
 
 using std::string;
 using std::ifstream;
@@ -37,6 +38,11 @@ struct oclHandleStruct
 };
 
 struct oclHandleStruct oclHandles;
+
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 
 int total_kernels = 2;
 string kernel_names[2] = {"BFS_1", "BFS_2"};
@@ -684,5 +690,18 @@ void _clFree(cl_mem ob) throw(string){
 	}        
     if (oclHandles.cl_status!= CL_SUCCESS)
        throw(oclHandles.error_str);
+}
+
+void _clInitDebug(){
+	init_debug(oclHandles.context, oclHandles.program, oclHandles.devices[0], &debug_kernel, &debug_queue);
+}
+
+void _clPrintDebug(){
+#if NUM_II > 0
+	//Read timer output from device
+	printf("Read II\n");
+	read_ii_ms_all_buffers(oclHandles.context, oclHandles.program, debug_kernel, debug_queue, II, &ii_info);
+	print_ii_ms(II, ii_info);
+#endif //NUM_II
 }
 #endif //_CL_HELPER_
