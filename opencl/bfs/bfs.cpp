@@ -79,6 +79,7 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
 	try{
 		//--1 transfer data from host to device
 		_clInit(version);			
+		_clInitDebug();
 		d_graph_nodes = _clMalloc(no_of_nodes*sizeof(Node), h_graph_nodes);
 		d_graph_edges = _clMalloc(edge_list_size*sizeof(int), h_graph_edges);
 		d_graph_mask = _clMallocRW(no_of_nodes*sizeof(char), h_graph_mask);
@@ -134,7 +135,7 @@ void run_bfs_gpu(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
 		_clFinish();
 
 		GetTime(end);
-		
+		_clPrintDebug();
 		//--3 transfer data from device to host
 		_clMemcpyD2H(d_cost,no_of_nodes*sizeof(int), h_cost);
 		//--statistics
