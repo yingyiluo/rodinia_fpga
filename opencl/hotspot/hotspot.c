@@ -530,8 +530,6 @@ int main(int argc, char** argv) {
 #endif
   if (error != CL_SUCCESS) fatal_CL(error, __LINE__);
 
-  //Initialize debug
-  init_debug(context, program, device, &debug_kernel, &debug_queue);
 
   char clOptions[110];
   sprintf(clOptions, "-I.");
@@ -549,6 +547,8 @@ int main(int argc, char** argv) {
   // Create an executable from the kernel
   clBuildProgram_SAFE(program, 1, &device, clOptions, NULL, NULL);
 
+  //Initialize debug
+  init_debug(context, program, device, &debug_kernel, &debug_queue);
   // Create kernel
   if (version_number >= 7)
   {

@@ -193,6 +193,8 @@ void print_ii_ms(const metric_t metric
         printf("TIME %5d",i);
         for(int j = 0; j < NUM; j++) { 
             printf(": %d : %10ld", buf[j * SIZE + i].index, buf[j * SIZE + i].time);
+            if(metric == II && i == 0)
+                printf(": %10d", i);
             if(metric == II && i > 0)
                 printf(": %10ld", buf[j * SIZE + i].time - buf[j * SIZE + i - 1].time);
         }
