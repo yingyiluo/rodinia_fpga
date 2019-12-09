@@ -43,7 +43,7 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 			}
 		}
 	}
-	finish_monitor_ii(buf, 1);
+	finish_monitor_ii(buf, 0);
 }
 
 //--5 parameters
