@@ -1,6 +1,10 @@
 include ../../common/make.config
 
 NAME = backprop
+
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
+
 ifeq ($(OS),Windows_NT)
 	EXE = $(NAME).exe
 else
@@ -24,13 +28,13 @@ endif
 
 EXTRA_FLAGS += -Wno-unused-result
 
-all: $(EXE) $(AOT_PROGRAMS)
+all: $(EXE) $(AOT_PROGRAMS) $(COMMON_SRC)
 
 profile: CFLAGS += -DPROFILE
-profile: $(EXE) $(AOT_PROGRAMS)
+profile: $(EXE) $(AOT_PROGRAMS) $(COMMON_SRC)
 
 $(EXE): $(SRC)
-	$(CXX) $(CFLAGS) $(SRC) -o $(EXE) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
+	$(CXX) $(CFLAGS) $(SRC) -o $(EXE) $(COMMON_SRC) $(OPENCL_INC) $(OPENCL_LIB) $(EXTRA_FLAGS)
 
 clean:
 	$(RM) $(EXE) *.aoco $(KERNEL_NAMES)

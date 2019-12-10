@@ -25,11 +25,8 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 		monitor_ii_1(buf, tid);
 		if(g_graph_mask[tid])
 		{
-			g_graph_mask[tid]=false;
-			int temp = g_graph_nodes[tid].starting;
-			int temp2 = g_graph_nodes[tid].no_of_edges;
-			
-			for(int i=temp; i<(temp + temp2); i++)
+			g_graph_mask[tid]=false;	
+			for(int i=g_graph_nodes[tid].starting; i<(g_graph_nodes[tid].no_of_edges + g_graph_nodes[tid].starting); i++)
 			{
 				// ii
 				// monitor_ii_2(buf, tid, (i - temp), temp2);
@@ -53,11 +50,11 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 		    __global char*     restrict g_over,
 		             const int          no_of_nodes)
 {
-	// __local stamp_t buf[SIZE_II];
+	__local stamp_t buf[SIZE_II];
 	for (int tid=0; tid<no_of_nodes; tid++)
 	{
 		// ii
-		// monitor_ii_1(buf, tid);
+		monitor_ii_1(buf, tid);
 
 		if(g_updating_graph_mask[tid])
 		{
@@ -67,5 +64,5 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 			g_updating_graph_mask[tid]=false;
 		}
 	}
-	// finish_monitor_ii(buf, 1);
+	finish_monitor_ii(buf, 1);
 }

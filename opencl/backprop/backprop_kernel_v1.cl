@@ -1,3 +1,7 @@
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
+
 #define ABS(x)          (((x) > 0.0) ? (x) : (-(x)))
 #define ETA             0.3  //eta value
 #define MOMENTUM        0.3  //momentum value
@@ -87,14 +91,21 @@ __kernel void bpnn_adjust_weights(__global float* restrict delta,
 	float new_dw;
 	int k, j;
 	ly[0] = 1.0;
+	__local stamp_t buf[SIZE_II];
 
 	for (j = 1; j <= ndelta; j++)
 	{
+		// ii
+		monitor_ii_1(buf, (j - 1));
 		for (k = 0; k <= nly; k++)
 		{
+			// ii (2)
+			// monitor_ii_2(buf, (j - 1), k, (nly + 1));
+
 			new_dw = ((ETA * delta[j] * ly[k]) + (MOMENTUM * oldw[k * (ndelta + 1) + j]));
 			w[k * (ndelta + 1) + j] += new_dw;
 			oldw[k * (ndelta + 1) + j] = new_dw;
 		}
 	}
+	finish_monitor_ii(buf, 0);
 }

@@ -1,7 +1,7 @@
 #ifndef DEBUG_DEFINES__H
 #define DEBUG_DEFINES__H
 
-#define NUM_II 2
+#define NUM_II 1
 #define NUM_MS 0
 #define NUM_ST 0
 #define NUM_CF 0
