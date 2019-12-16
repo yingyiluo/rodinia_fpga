@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_altera_channels : enable channel
+#pragma OPENCL EXTENSION cl_intel_channels : enable
 
 #if NUM_II > 0
 channel stamp_t ii_chan[NUM_II] __attribute__((depth(SIZE_II)));
@@ -41,7 +41,7 @@ inline void monitor_ii_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
 
 inline void finish_monitor_ii(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_II; i++) {
-    write_channel_nb_altera(ii_chan[id], buf[i]);  
+    write_channel_nb_intel(ii_chan[id], buf[i]);  
   }
 }
 
@@ -49,7 +49,7 @@ inline void monitor_ii_ndr_1(int idx, int id) {
   stamp_t tmp;
   tmp.time = get_time((ftime_t)idx);
   tmp.index = idx;
-  (void) write_channel_nb_altera(ii_chan[id], tmp);
+  (void) write_channel_nb_intel(ii_chan[id], tmp);
 }
 
 #endif
@@ -77,7 +77,7 @@ inline void monitor_ms_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
 
 inline void finish_monitor_ms(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_MS; i++) {
-    write_channel_nb_altera(ms_chan[id], buf[i]);  
+    write_channel_nb_intel(ms_chan[id], buf[i]);  
   }
 }
 
@@ -86,7 +86,7 @@ inline void finish_monitor_ms_2(__local stamp_t* buf1, __local stamp_t* buf2, in
     stamp_t tmp;
     tmp.time = buf2[i].time - buf1[i].time;
     tmp.index = buf1[i].index;
-    write_channel_nb_altera(ms_chan[id], tmp);  
+    write_channel_nb_intel(ms_chan[id], tmp);  
   }
 }
 #endif
@@ -117,7 +117,7 @@ inline void monitor_st_3(__local signal_t* buf, int i, int j, int k, int sj, int
 
 inline void finish_monitor_st(__local signal_t* buf, int id) {
   for(int i = 0; i < SIZE_ST; i++) {
-    write_channel_nb_altera(st_chan[id], buf[i]);  
+    write_channel_nb_intel(st_chan[id], buf[i]);  
   }
 }
 #endif
@@ -125,12 +125,12 @@ inline void finish_monitor_st(__local signal_t* buf, int id) {
 #if NUM_CF > 0
 inline void monitor_cf_write(int id, int depth) {
   mem_fence(CLK_CHANNEL_MEM_FENCE);
-  (void) write_channel_nb_altera(write_chan[id], depth);
+  (void) write_channel_nb_intel(write_chan[id], depth);
 }
 
 inline void monitor_cf_read(int id, int depth) {
   mem_fence(CLK_CHANNEL_MEM_FENCE);
-  (void) write_channel_nb_altera(read_chan[id], depth);
+  (void) write_channel_nb_intel(read_chan[id], depth);
 }
 #endif
 
@@ -147,7 +147,7 @@ __kernel void collect_ii_ms(metric_t m,
       #pragma unroll
       for(int idx = 0; idx < NUM_II; idx++) {
         if(idx == id)
-          tmp = read_channel_altera(ii_chan[idx]);
+          tmp = read_channel_intel(ii_chan[idx]);
       }
     }
     #endif
@@ -157,7 +157,7 @@ __kernel void collect_ii_ms(metric_t m,
       #pragma unroll
       for(int idx = 0; idx < NUM_MS; idx++) {
         if(idx == id)
-          tmp = read_channel_altera(ms_chan[idx]);
+          tmp = read_channel_intel(ms_chan[idx]);
       }
     }
     #endif
@@ -175,7 +175,7 @@ __kernel void collect_st(int id,
     #pragma unroll
     for(int idx = 0; idx < NUM_ST; idx++) {
       if(idx == id)
-        tmp = read_channel_altera(st_chan[idx]);
+        tmp = read_channel_intel(st_chan[idx]);
     }
     output[i] = tmp;
   }
@@ -223,7 +223,7 @@ __kernel void collect_cf(int id,
     #pragma unroll
     for(int idx = 0; idx < NUM_CF; idx++) {
       if(idx == id)
-        tmp = read_channel_altera(cf_chan[idx]);
+        tmp = read_channel_intel(cf_chan[idx]);
     }
     output[i] = tmp;
   }
