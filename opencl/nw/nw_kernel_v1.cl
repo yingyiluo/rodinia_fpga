@@ -1,3 +1,7 @@
+#ifndef UNROLL
+	#define UNROLL 1
+#endif
+
 inline int maximum(int a, int b, int c)
 {
 	int k;
@@ -19,6 +23,7 @@ __kernel void nw_kernel1(__global int* restrict reference,
 {
 	for (int j = 1; j < dim - 1; ++j)
 	{
+		#pragma unroll UNROLL
 		for (int i = 1; i < dim - 1; ++i)
 		{
 			int index = j * dim + i;
