@@ -121,6 +121,8 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
 stamp_t*           ii_info;
+stamp_t*          ms_info;
+signal_t*         st_info;
 	cl_platform_id *platforms = NULL;
 	cl_context_properties context_properties[3];
 	cl_device_type device_type;
@@ -757,12 +759,28 @@ stamp_t*           ii_info;
 	}
 #endif
 
+TimeStamp monitor_start, monitor_end;
+GetTime(monitor_start);
 #if NUM_II > 0
         //Read timer output from device
         printf("Read II\n");
         read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
         print_ii_ms(II, ii_info);
 #endif //NUM_II
+#if NUM_MS > 0
+        //Read timer output from device
+        printf("Read MS\n");
+        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, MS, &ms_info);
+        print_ii_ms(MS, ms_info);
+#endif //NUM_MS
+#if NUM_ST > 0
+        //Read timer output from device
+        printf("Read ST\n");
+        read_st_all_buffers(context, program, debug_kernel, debug_queue, &st_info);
+        print_st(st_info);
+#endif //NUM_ST
+GetTime(monitor_end);
+printf("Monitor data transfer done in %0.3lf ms.\n", TimeDiff(monitor_start, monitor_end));
 
 	//======================================================================================================================================================150
 	// 	COPY RESULTS BACK TO CPU

@@ -536,6 +536,8 @@ int main(int argc, char** argv)
   }
 #endif
 
+TimeStamp monitor_start, monitor_end;
+GetTime(monitor_start);
 #if NUM_II > 0
         //Read timer output from device
         printf("Read II\n");
@@ -554,7 +556,8 @@ int main(int argc, char** argv)
         read_st_all_buffers(context, program, debug_kernel, debug_queue, &st_info);
         print_st(st_info);
 #endif //NUM_ST
-
+GetTime(monitor_end);
+printf("Monitor data transfer done in %0.3lf ms.\n", TimeDiff(monitor_start, monitor_end));
 
   // pointers are always swapped one extra time at the end of the iteration loop and hence, d_a points to the output, not d_c
   err = clEnqueueReadBuffer( command_queue, d_a, CL_TRUE, 0, sizeof(float) * count, tempOut, 0, NULL, NULL );
