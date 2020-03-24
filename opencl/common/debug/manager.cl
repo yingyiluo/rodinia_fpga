@@ -41,7 +41,7 @@ inline void monitor_ii_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
 
 inline void finish_monitor_ii(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_II; i++) {
-    write_channel_nb_altera(ii_chan[id], buf[i]);  
+    (void) write_channel_nb_altera(ii_chan[id], buf[i]);  
   }
 }
 
@@ -55,10 +55,26 @@ inline void monitor_ii_ndr_1(int idx, int id) {
 #endif
 
 #if NUM_MS > 0
+// use two bufs to record start and end time
 inline void monitor_ms_1(__local stamp_t* buf, int i, ftime_t dummy) {
   int n = i & MASK_MS;
   buf[n].time = get_time((ftime_t)dummy);
   buf[n].index = i;
+  mem_fence(CLK_GLOBAL_MEM_FENCE);
+}
+
+inline ftime_t monitor_ms_prep_1(ftime_t dummy) {
+  ftime_t t = get_time((ftime_t)dummy);
+  mem_fence(CLK_GLOBAL_MEM_FENCE);
+  return t;
+}
+
+inline void monitor_ms_1_one(__local stamp_t* buf, int i, ftime_t s, ftime_t dummy) {
+  ftime_t time = get_time((ftime_t)dummy) - s;
+  int n = i & MASK_MS;
+  buf[n].time = time;
+  buf[n].index = i;
+  mem_fence(CLK_GLOBAL_MEM_FENCE);
 }
 
 inline void monitor_ms_2(__local stamp_t* buf, int i, int j, int sj, ftime_t dummy) {
@@ -66,6 +82,7 @@ inline void monitor_ms_2(__local stamp_t* buf, int i, int j, int sj, ftime_t dum
   int n = idx & MASK_MS;
   buf[n].time = get_time((ftime_t)dummy);
   buf[n].index = idx;
+  mem_fence(CLK_GLOBAL_MEM_FENCE);
 }
 
 inline void monitor_ms_3(__local stamp_t* buf, int i, int j, int k, int sj, int sk, ftime_t dummy) {
@@ -73,11 +90,12 @@ inline void monitor_ms_3(__local stamp_t* buf, int i, int j, int k, int sj, int 
   int n = idx & MASK_MS;
   buf[n].time = get_time((ftime_t)dummy);
   buf[n].index = idx;
+  mem_fence(CLK_GLOBAL_MEM_FENCE);
 }
 
 inline void finish_monitor_ms(__local stamp_t* buf, int id) {
   for(int i = 0; i < SIZE_MS; i++) {
-    write_channel_nb_altera(ms_chan[id], buf[i]);  
+    (void) write_channel_nb_altera(ms_chan[id], buf[i]);  
   }
 }
 
@@ -86,7 +104,7 @@ inline void finish_monitor_ms_2(__local stamp_t* buf1, __local stamp_t* buf2, in
     stamp_t tmp;
     tmp.time = buf2[i].time - buf1[i].time;
     tmp.index = buf1[i].index;
-    write_channel_nb_altera(ms_chan[id], tmp);  
+    (void) write_channel_nb_altera(ms_chan[id], tmp);  
   }
 }
 #endif
@@ -117,7 +135,7 @@ inline void monitor_st_3(__local signal_t* buf, int i, int j, int k, int sj, int
 
 inline void finish_monitor_st(__local signal_t* buf, int id) {
   for(int i = 0; i < SIZE_ST; i++) {
-    write_channel_nb_altera(st_chan[id], buf[i]);  
+    (void) write_channel_nb_altera(st_chan[id], buf[i]);  
   }
 }
 #endif
