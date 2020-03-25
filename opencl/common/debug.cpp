@@ -46,22 +46,22 @@ void init_debug(const cl_context         context
 #if NUM_ST > 0
     (*queue)[1] = clCreateCommandQueue(context,device,CL_QUEUE_PROFILING_ENABLE,&status);
     if(status != CL_SUCCESS) { 
-        printf("-ERROR- Could not create queue in debug %1d\n", 1);
+        printf("-ERROR- Could not create queue in debug\n");
     }
     (*kernel)[1] = clCreateKernel(program,debug_kernel_names[1],&status);
     if(status != CL_SUCCESS) { 
-        printf("-ERROR- Could not create kernel in debug %1d\n", debug_kernel_names[1]);
+        printf("-ERROR- Could not create kernel in debug %s\n", debug_kernel_names[1]);
     }
 #endif
 
 #if NUM_CF > 0
     (*queue)[2] = clCreateCommandQueue(context,device,CL_QUEUE_PROFILING_ENABLE,&status);
     if(status != CL_SUCCESS) { 
-        printf("-ERROR- Could not create queue in debug %1d\n", 2);
+        printf("-ERROR- Could not create queue in debug\n");
     }
     (*kernel)[2] = clCreateKernel(program,debug_kernel_names[2],&status);
     if(status != CL_SUCCESS) { 
-        printf("-ERROR- Could not create kernel in debug %1d\n", debug_kernel_names[2]);
+        printf("-ERROR- Could not create kernel in debug %s\n", debug_kernel_names[2]);
     }
 #endif
 
@@ -123,8 +123,6 @@ void read_ii_ms(const cl_context         context
                              ,NULL);
     sprintf(message,"Could not get info on kernel in %s", kernel_name);
     if(status != CL_SUCCESS) printf("%s %d",message,status);   
-
-    printf("Kernel %s has %0d args\n", kernel_name, kernel_arg_size);
 
     read_buffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(stamp_t) * mem_size, NULL, &status);
     if(status != CL_SUCCESS) { 

@@ -35,6 +35,26 @@ else
 	AOT_PROGRAMS =
 endif
 
+ifdef NUM_II
+	CFLAGS += -DNUM_II=$(NUM_II)
+endif
+
+ifdef NUM_MS
+	CFLAGS += -DNUM_MS=$(NUM_MS)
+endif
+
+ifdef NUM_ST
+	CFLAGS += -DNUM_ST=$(NUM_ST)
+endif
+
+ifdef NUM_CF
+	CFLAGS += -DNUM_CF=$(NUM_CF)
+endif
+
+ifdef MONITOR_PRINT
+	CFLAGS += -DMONITOR_PRINT
+endif
+
 ifeq ($(OS),Windows_NT)
 	EXE=srad.exe
 	LDFLAGS+=/out:$@

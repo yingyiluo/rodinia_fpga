@@ -1,13 +1,30 @@
 #ifndef DEBUG_DEFINES__H
 #define DEBUG_DEFINES__H
 
-#define NUM_II 1
-#define NUM_MS 0
-#define NUM_ST 0
-#define NUM_CF 0
+#ifndef NUM_II
+	#define NUM_II 0
+#endif
+
+#ifndef NUM_MS
+	#define NUM_MS 0
+#endif
+
+#ifndef NUM_ST
+	#define NUM_ST 0
+#endif
+
+#ifndef NUM_CF
+	#define NUM_CF 0
+#endif
+
+#ifdef FP_DOUBLE
+#define fp double
+#else
+#define fp float
+#endif
 
 typedef ulong  TIME_TYPE;
-typedef double data_t;
+typedef fp data_t;
 /*
 #define SIZE_II 1024
 #define MASK_II 0x3ff
@@ -43,6 +60,7 @@ typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
 } stamp_t;
 
 typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
+//typedef struct __attribute__((packed)) {
     ftime_t      time;
     data_t       data;
     int          index;   

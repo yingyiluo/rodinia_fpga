@@ -763,21 +763,27 @@ TimeStamp monitor_start, monitor_end;
 GetTime(monitor_start);
 #if NUM_II > 0
         //Read timer output from device
-        printf("Read II\n");
         read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
+#ifdef MONITOR_PRINT
+        printf("Read II\n");
         print_ii_ms(II, ii_info);
+#endif
 #endif //NUM_II
 #if NUM_MS > 0
         //Read timer output from device
-        printf("Read MS\n");
         read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, MS, &ms_info);
+#ifdef MONITOR_PRINT
+        printf("Read MS\n");
         print_ii_ms(MS, ms_info);
+#endif
 #endif //NUM_MS
 #if NUM_ST > 0
         //Read timer output from device
-        printf("Read ST\n");
         read_st_all_buffers(context, program, debug_kernel, debug_queue, &st_info);
+#ifdef MONITOR_PRINT
+        printf("Read ST\n");
         print_st(st_info);
+#endif
 #endif //NUM_ST
 GetTime(monitor_end);
 printf("Monitor data transfer done in %0.3lf ms.\n", TimeDiff(monitor_start, monitor_end));
