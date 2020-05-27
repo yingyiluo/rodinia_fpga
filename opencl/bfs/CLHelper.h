@@ -42,7 +42,7 @@ struct oclHandleStruct oclHandles;
 //Debug Interface 
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
-stamp_t*           ii_info;
+stamp_t*           time_stamp;
 
 int total_kernels = 2;
 string kernel_names[2] = {"BFS_1", "BFS_2"};
@@ -697,11 +697,11 @@ void _clInitDebug(){
 }
 
 void _clPrintDebug(){
-#if NUM_II > 0
+#if NUM_DEBUG_POINTS > 0
 	//Read timer output from device
-	printf("Read II\n");
-	read_ii_ms_all_buffers(oclHandles.context, oclHandles.program, debug_kernel, debug_queue, II, &ii_info);
-	print_ii_ms(II, ii_info);
-#endif //NUM_II
+	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+        print_debug(time_stamp);
+        reset_debug_all_buffers(debug_kernel,debug_queue);
+#endif //NUM_DEBUG_POINTS
 }
 #endif //_CL_HELPER_

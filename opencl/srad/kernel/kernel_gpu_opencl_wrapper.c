@@ -120,7 +120,7 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 //Debug Interface 
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
-stamp_t*           ii_info;
+stamp_t*           time_stamp;
 stamp_t*          ms_info;
 signal_t*         st_info;
 	cl_platform_id *platforms = NULL;
@@ -761,30 +761,12 @@ signal_t*         st_info;
 
 TimeStamp monitor_start, monitor_end;
 GetTime(monitor_start);
-#if NUM_II > 0
-        //Read timer output from device
-        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
-#ifdef MONITOR_PRINT
-        printf("Read II\n");
-        print_ii_ms(II, ii_info);
-#endif
-#endif //NUM_II
-#if NUM_MS > 0
-        //Read timer output from device
-        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, MS, &ms_info);
-#ifdef MONITOR_PRINT
-        printf("Read MS\n");
-        print_ii_ms(MS, ms_info);
-#endif
-#endif //NUM_MS
-#if NUM_ST > 0
-        //Read timer output from device
-        read_st_all_buffers(context, program, debug_kernel, debug_queue, &st_info);
-#ifdef MONITOR_PRINT
-        printf("Read ST\n");
-        print_st(st_info);
-#endif
-#endif //NUM_ST
+#if NUM_DEBUG_POINTS > 0
+	//Read timer output from device
+	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+        print_debug(time_stamp);
+        reset_debug_all_buffers(debug_kernel,debug_queue);
+#endif //NUM_DEBUG_POINTS
 GetTime(monitor_end);
 printf("Monitor data transfer done in %0.3lf ms.\n", TimeDiff(monitor_start, monitor_end));
 

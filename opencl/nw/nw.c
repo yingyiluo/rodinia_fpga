@@ -74,7 +74,7 @@ static cl_int           num_devices;
 //Debug Interface 
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
-stamp_t*           ii_info;
+stamp_t*           time_stamp;
 
 static int initialize()
 {
@@ -536,12 +536,12 @@ int main(int argc, char **argv)
 #endif
 
        
-#if NUM_II > 0
-        //Read timer output from device
-        printf("Read II\n");
-        read_ii_ms_all_buffers(context, prog, debug_kernel, debug_queue, II, &ii_info);
-        print_ii_ms(II, ii_info);
-#endif //NUM_II
+#if NUM_DEBUG_POINTS > 0
+	//Read timer output from device
+	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+        print_debug(time_stamp);
+        reset_debug_all_buffers(debug_kernel,debug_queue);
+#endif //NUM_DEBUG_POINTS
 
 	err = clEnqueueReadBuffer(cmd_queue, input_itemsets_d, 1, 0, ref_size * sizeof(int), output_itemsets, 0, 0, 0);
 	clFinish(cmd_queue);

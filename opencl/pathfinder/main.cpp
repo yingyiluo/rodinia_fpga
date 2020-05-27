@@ -57,7 +57,7 @@ int ITERATIONS;
 //Debug Interface 
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
-stamp_t*           ii_info;
+stamp_t*           time_stamp;
 
 void init(int argc, char** argv)
 {
@@ -317,12 +317,12 @@ int main(int argc, char** argv)
 	}
 #endif
 
-#if NUM_II > 0
-        //Read timer output from device
-        printf("Read II\n");
-        read_ii_ms_all_buffers(cl.ctxt(), cl.program, debug_kernel, debug_queue, II, &ii_info);
-        print_ii_ms(II, ii_info);
-#endif //NUM_II
+#if NUM_DEBUG_POINTS > 0
+	//Read timer output from device
+	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+        print_debug(time_stamp);
+        reset_debug_all_buffers(debug_kernel,debug_queue);
+#endif //NUM_DEBUG_POINTS
 	// Copy results back to host.
 	clEnqueueReadBuffer(cl.q(), d_gpuResult[dst], CL_TRUE, 0, sizeof(cl_int)*cols, result, 0, NULL, NULL);
 

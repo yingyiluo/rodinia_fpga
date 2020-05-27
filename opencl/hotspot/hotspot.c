@@ -17,7 +17,7 @@ cl_program program;
 //Debug Interface 
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
-stamp_t*           ii_info;
+stamp_t*           time_stamp;
 
 void writeoutput(float *vect, int grid_rows, int grid_cols, char *file) {
 
@@ -359,12 +359,12 @@ int compute_tran_temp(cl_mem MatrixPower, cl_mem MatrixTemp[2], int col, int row
   }
 #endif
 
-#if NUM_II > 0
-        //Read timer output from device
-        printf("Read II\n");
-        read_ii_ms_all_buffers(context, program, debug_kernel, debug_queue, II, &ii_info);
-        print_ii_ms(II, ii_info);
-#endif //NUM_II
+#if NUM_DEBUG_POINTS > 0
+	//Read timer output from device
+	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+        print_debug(time_stamp);
+        reset_debug_all_buffers(debug_kernel,debug_queue);
+#endif //NUM_DEBUG_POINTS
 
   computeTime = TimeDiff(compute_start, compute_end);
   printf("\nComputation done in %0.3lf ms.\n", computeTime);
