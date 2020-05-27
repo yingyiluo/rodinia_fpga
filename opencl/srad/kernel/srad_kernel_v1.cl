@@ -67,14 +67,12 @@ __kernel void srad_kernel(int           d_Nr,
                  __global fp*  restrict d_c, 
                  __global fp*  restrict d_I)
 {
-	__local stamp_t buf[SIZE_II];
 	for (int col = 0; col < d_Nc; ++col)
 	{
 		for (int row = 0; row < d_Nr; ++row)
 		{
 			int ei = col * d_Nr + row;
-			monitor_ii_1(buf, ei);
-
+			take_snapshot(0, ei);
 			fp d_Jc;
 			fp d_dN_loc, d_dS_loc, d_dW_loc, d_dE_loc;
 			fp d_c_loc;
@@ -122,7 +120,6 @@ __kernel void srad_kernel(int           d_Nr,
 			d_c[ei]  = d_c_loc;
 		}
 	}
-	finish_monitor_ii(buf, 0);
 }
 
 //========================================================================================================================================================================================================200

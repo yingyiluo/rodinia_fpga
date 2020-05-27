@@ -1,57 +1,95 @@
 #ifndef DEBUG_DEFINES__H
 #define DEBUG_DEFINES__H
 
-#define NUM_II 1
-#define NUM_MS 0
-#define NUM_ST 0
-#define NUM_CF 0
 
-typedef ulong  TIME_TYPE;
-typedef float data_t;
-/*
-#define SIZE_II 1024
-#define MASK_II 0x3ff
-#define SIZE_MS 1024
-#define MASK_MS 0x3ff
-#define SIZE_ST 1024
-#define MASK_ST 0x3ff
-#define SIZE_CF 1024
-#define MASK_CF 0x3ff
-*/
+#pragma OPENCL EXTENSION cl_altera_channels : enable channel
 
-#define SIZE_II 2048
-#define MASK_II 0x7ff
-#define SIZE_MS 2048
-#define MASK_MS 0x7ff
-#define SIZE_ST 2048
-#define MASK_ST 0x7ff
-#define SIZE_CF 2048
-#define MASK_CF 0x7ff
+#define USE_OPENCL
 
 
-typedef enum {
-    II,
-    MS,
-    ST,
-    DF
-} metric_t;
+/* Number of debug channels for taking snapshot in time. 
+ * Set the variable to zero if you don't want to enable trace buffer. Ensure that you have as many 
+ * instances of take_snapshot as tracebuffers. An un-connected channel would result into compilation 
+ * error 
+ */
+#define NUM_DEBUG_POINTS 1
 
-typedef TIME_TYPE ftime_t;
+/* Number of watch points for address monitoring. 
+ * Set the variable to zero if you do not want a watch point. Ensure that you add as many instances of 
+ * add_watch and monitor_address as the number of watch points declared here 
+ */
+#define NUM_WATCH_POINTS 0
 
-typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
-    ftime_t      time;
-    int          index;
-} stamp_t;
+/* All the sampled stamp would be stored in a local memory which can be read 
+ * at the end of test. This would ensure minimal interaction with the existing design and 
+ * will not affect the memory bandwidth while the design is running 
+ */
+#define SAMPLE_DEPTH 2048
 
-typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
-    ftime_t      time;
-    data_t       data;
-    int          index;   
-} signal_t;
+/* Number of tags and timestamps stored for a watch point */
+#define WATCH_SAMPLE_DEPTH 8
 
-typedef struct __attribute__((packed)) __attribute__((aligned(8))) {
-    ftime_t      time;
-    int          depth;
-//    int          index;
-} channel_t;
+/* Keeping the depth of channels as 16,however, this will be optimized by AOCL */
+#define DEBUG_CHANNEL_DEPTH 4
+
+/* Start sampling automatically, default state after reset can be set here */
+#define DEFAULT_SAMPLING_SCHEME D_RECORD
+
+/* Start sampling automatically, default state after reset can be set here */
+#define DEFAULT_WATCH_SAMPLING_SCHEME D_RECORD
+
+
+#define PACKED_AGGREGATE __attribute__((aligned (1))) __attribute__((packed))
+
+/* Time stamp data type, unsigned long (64-bit counter is sufficient to sample time) */
+typedef ulong stamp_t;
+
+/* Commands to pass to autorun kernel collecting the sample point */
+typedef enum {D_RESET,        //Reset the trace buffer
+              D_RECORD,        //Start storing the data in trace buffer, stop after depth : FIXME 
+              D_RECORD_CYCLIC, //Store the data in trace buffer in a cyclic buffer
+              D_STOP,         //Stop Storing the data     
+              D_READ          //Read the data from trace buffer to host
+             } debug_command_e; 
+
+/* Not all the 64-bits of timer need to be stored, making it a 40-bit storage  would save M20 blocks */
+typedef struct PACKED_AGGREGATE
+               { unsigned char hi; 
+                 unsigned int  lo; 
+               } buffer_s;
+
+typedef struct PACKED_AGGREGATE 
+               { unsigned int   addr; 
+                 unsigned short tag; 
+               } watch_s;
+
+#if SAMPLE_DEPTH <= 512  
+#define DEBUG_SAMPLE_DEPTH 512
+#elif SAMPLE_DEPTH <= 1024
+#define DEBUG_SAMPLE_DEPTH 1024
+#elif SAMPLE_DEPTH <= 1536
+#define DEBUG_SAMPLE_DEPTH 1536
+#elif SAMPLE_DEPTH <= 2048
+#define DEBUG_SAMPLE_DEPTH 2048
+#endif
+
+/* Writes data channel without blocking, this channel is provided to a trace-buffer, which samples  
+ * a free running counter and stores the data into a local memory. This memory can be read by host 
+ * by launching the kernel read_stamp 
+ *  
+ * void take_snapshot(uint id, stamp_t in); 
+ */
+
+/* Add a watchpoint for the given address. Adress is written into a channel without blocking, which is 
+ * provided to a watch buffer. This buffer conitnously monitors the adress provided by monitor_address 
+ * and stores the time stamp and a tag provided by user, into a local memory. 
+ * This local memory can be read by launching the kernel read_watch 
+ *
+ * void add_watch(uint id, size_t address); 
+ *
+ * void monitor_address(uint id, size_t addr, ushort tag); 
+ */
+
+
+
 #endif //DEBUG_DEFINES__H

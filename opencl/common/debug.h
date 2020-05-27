@@ -7,7 +7,10 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include "debug_defines.h"
+
+
 
 /* Intiailize the timer infrastructure for debug and launch auto kernels if using emulator */
 void init_debug(const cl_context         context
@@ -16,53 +19,106 @@ void init_debug(const cl_context         context
                ,      cl_kernel**        kernel
                ,      cl_command_queue** queue);
 
-void read_ii_ms(const cl_context         context
-               ,const cl_program         program
-               ,const cl_kernel*         kernel
-               ,const cl_command_queue*  queue
-               ,const metric_t           metric
-               ,const cl_int             buffer_id
-               ,stamp_t**                iibuf);
 
-
-void read_ii_ms_all_buffers(const cl_context         context
-                           ,const cl_program         program
-                           ,const cl_kernel*         kernel
-                           ,const cl_command_queue*  queue
-                           ,const metric_t           metric
-                           ,stamp_t**                iibuf); 
-
-void print_ii_ms(const metric_t metric
-                ,stamp_t* buf); 
-
-void read_st(const cl_context         context
+/* Read the sampled data into an array */
+void read_debug(const cl_context         context
                ,const cl_program         program
                ,const cl_kernel*         kernel
                ,const cl_command_queue*  queue
                ,const cl_int             buffer_id
-               ,signal_t**               stbuf);
+               ,stamp_t**                time_stamp);
 
-void read_st_all_buffers(const cl_context         context
+
+/* Read the sampled data from all trace buffers into an array */
+void read_debug_all_buffers(const cl_context         context
                            ,const cl_program         program
                            ,const cl_kernel*         kernel
                            ,const cl_command_queue*  queue
-                           ,signal_t**               stbuf); 
+                           ,stamp_t**                time_stamp); 
 
-void print_st(signal_t* stbuf); 
+/* Reset the sampler for next set of sample inputs */
+void reset_debug(const cl_kernel*          kernel
+                ,const cl_command_queue*   queue
+                ,const cl_int              buffer_id); 
 
-void read_cf(const cl_context         context
-               ,const cl_program         program
+
+/* Reset all the trace buffers */
+void reset_debug_all_buffers(const cl_kernel*        kernel
+                            ,const cl_command_queue* queue);
+
+
+
+
+/* Stop the trace buffer storing data*/
+void stop_debug(const cl_kernel*          kernel
+               ,const cl_command_queue*   queue
+               ,const cl_int              buffer_id); 
+
+
+
+
+/* Start storing time stamp data into trace buffer */
+void start_debug(const cl_kernel*          kernel
+                ,const cl_command_queue*   queue
+                ,const cl_int              buffer_id); 
+
+
+
+
+
+/* Start storing time stamp data into trace cyclic buffer */
+void start_cyclic_debug(const cl_kernel*          kernel
+                       ,const cl_command_queue*   queue
+                       ,const cl_int              buffer_id);
+
+
+
+
+/* Print the read timer values for all the channels */
+void print_debug(const stamp_t* time_stamp); 
+
+
+void read_watch(const cl_context         context
                ,const cl_kernel*         kernel
                ,const cl_command_queue*  queue
-               ,const cl_int             buffer_id
-               ,channel_t**              cfbuf);
+               ,const cl_int             watch_id
+               ,watch_s**                watch_point);
 
-void read_cf_all_buffers(const cl_context         context
-                           ,const cl_program         program
+void read_watch_all_buffers(const cl_context         context
                            ,const cl_kernel*         kernel
                            ,const cl_command_queue*  queue
-                           ,channel_t**              cfbuf); 
+                           ,watch_s**                watch_point); 
 
-void print_cf(channel_t* cfbuf); 
+
+void print_watch(const watch_s* watch_point);
+
+void reset_watch_all(const cl_kernel*        kernel
+                    ,const cl_command_queue* queue); 
+
+
+void control_watch(const cl_kernel*        kernel
+                  ,const cl_command_queue* queue
+                  ,const cl_int            watch_id
+                  ,const debug_command_e   cmd); 
+
+void reset_watch(const cl_kernel*          kernel
+                ,const cl_command_queue*   queue
+                ,const cl_int              watch_id);
+
+
+void stop_watch(const cl_kernel*          kernel
+               ,const cl_command_queue*   queue
+               ,const cl_int              watch_id); 
+
+
+void start_watch(const cl_kernel*          kernel
+                ,const cl_command_queue*   queue
+                ,const cl_int              watch_id);
+
+void start_cyclic_watch(const cl_kernel*          kernel
+                       ,const cl_command_queue*   queue
+                       ,const cl_int              watch_id);
+
+
 
 #endif //DEBUG__H

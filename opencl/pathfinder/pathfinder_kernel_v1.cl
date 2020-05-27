@@ -10,10 +10,9 @@ __kernel void dynproc_kernel (__global int* restrict wall,
                                        int  cols,
                                        int  t)
 {
-	__local stamp_t buf[SIZE_II];
 	for(int n = 0; n < cols; n++)
 	{
-		monitor_ii_1(buf, n);
+		take_snapshot(0,(stamp_t)n);
 		int min = src[n];
 		if (n > 0)
 		{
@@ -25,5 +24,4 @@ __kernel void dynproc_kernel (__global int* restrict wall,
 		}
 		dst[n] = wall[(t + 1) * cols + n] + min;
 	}
-	finish_monitor_ii(buf, 0);
 }
