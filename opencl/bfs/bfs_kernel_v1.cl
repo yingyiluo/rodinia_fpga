@@ -19,18 +19,14 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 		    __global int*        restrict g_cost, 
 		             const int            no_of_nodes)
 {
-	__local stamp_t buf[SIZE_II];
 	for (int tid=0; tid<no_of_nodes; tid++)
 	{
-		monitor_ii_1(buf, tid);
+		take_snapshot(0, tid);
 		if(g_graph_mask[tid])
 		{
 			g_graph_mask[tid]=false;	
 			for(int i=g_graph_nodes[tid].starting; i<(g_graph_nodes[tid].no_of_edges + g_graph_nodes[tid].starting); i++)
 			{
-				// ii
-				// monitor_ii_2(buf, tid, (i - temp), temp2);
-				
 				int id = g_graph_edges[i];
 				if(!g_graph_visited[id])
 				{
@@ -40,7 +36,6 @@ __kernel void BFS_1(__global const Node* restrict g_graph_nodes,
 			}
 		}
 	}
-	finish_monitor_ii(buf, 0);
 }
 
 //--5 parameters
@@ -50,12 +45,8 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 		    __global char*     restrict g_over,
 		             const int          no_of_nodes)
 {
-	__local stamp_t buf[SIZE_II];
 	for (int tid=0; tid<no_of_nodes; tid++)
 	{
-		// ii
-		monitor_ii_1(buf, tid);
-
 		if(g_updating_graph_mask[tid])
 		{
 			g_graph_mask[tid]=true;
@@ -64,5 +55,4 @@ __kernel void BFS_2(__global char*     restrict g_graph_mask,
 			g_updating_graph_mask[tid]=false;
 		}
 	}
-	finish_monitor_ii(buf, 1);
 }
