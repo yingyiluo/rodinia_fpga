@@ -21,8 +21,9 @@
 #include "common.h" 
 #include "host_common.h"
 #include "../../common/timer.h"
-
+#include "../common/debug.h"
 #define KERNEL_PREFIX "./euler3d_kernel"
+
 /*
 #if defined(AOCL_BOARD_a10pl4_dd4gb_gx115) || defined(AOCL_BOARD_p385a_sch_ax115)
 	#include "../../common/power_fpga.h"
@@ -34,6 +35,10 @@
 
 static bool compute_flux_arg_set = false;
 
+//Debug Interface 
+cl_kernel*         debug_kernel;
+cl_command_queue*  debug_queue;
+stamp_t*           ii_info;
 void compute_flux(int nelr, cl_mem elements_surrounding_elements, cl_mem normals, cl_mem variables, cl_mem ff_variable, \
                   cl_mem fluxes, cl_mem ff_flux_contribution_density_energy,
                   cl_mem ff_flux_contribution_momentum_x,
@@ -151,7 +156,9 @@ int main(int argc, char** argv){
   //_clInit(device_type, device_id);
   _clInit();
 
-  load_kernels(KERNEL_PREFIX);
+  cl_program prog = load_kernels(KERNEL_PREFIX);
+  //Initialize debug
+  init_debug(context, prog, device_list[0], &debug_kernel, &debug_queue);
   
   // set far field conditions and load them into constant memory on the gpu
   {
@@ -198,6 +205,12 @@ int main(int argc, char** argv){
     _clMemcpyH2D(ff_flux_contribution_momentum_z, &h_ff_flux_contribution_momentum_z, sizeof(FLOAT3));		
     _clMemcpyH2D(ff_flux_contribution_density_energy, &h_ff_flux_contribution_density_energy, sizeof(FLOAT3));
     _clFinish();
+#if NUM_II > 0
+        //Read timer output from device
+        printf("Read II\n");
+        read_ii_ms_all_buffers(context, prog, debug_kernel, debug_queue, II, &ii_info);
+        print_ii_ms(II, ii_info);
+#endif //NUM_II
   }
   
   int nel;

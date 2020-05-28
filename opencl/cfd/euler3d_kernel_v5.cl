@@ -1,3 +1,6 @@
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
 #include "common.h"
 #include "kernel_common.h"
 
@@ -54,9 +57,11 @@ __kernel void compute_flux(
     __constant FLOAT3* restrict ff_flux_contribution_momentum_z,
     int nelr){
   const float smoothing_coefficient = 0.2f;
+  __local stamp_t buf[SIZE_II];
 
   for (int i = 0; i < nelr; ++i) {
 
+    monitor_ii_1(buf, i);
     int j, nb;
     FLOAT3 normal; float normal_len;
     float factor;
@@ -213,6 +218,7 @@ __kernel void compute_flux(
     fluxes_momentum_z[i] = flux_i_momentum.z;
     fluxes_energy[i] = flux_i_density_energy;
   }
+  finish_monitor_ii(buf, 0);
 }
 
 __kernel void time_step(int j, int nelr, 

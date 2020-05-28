@@ -19,7 +19,6 @@ extern int compute_step_factor_idx;
 extern int time_step_idx;
 extern int compute_flux_contributions_idx;
 extern int compute_flux_idx;
-
 /*
  * Generic functions
  */
@@ -139,7 +138,7 @@ void compute_flux_contribution(float& density, FLOAT3& momentum,
                                FLOAT3& velocity, FLOAT3& fc_momentum_x,
                                FLOAT3& fc_momentum_y, FLOAT3& fc_momentum_z,
                                FLOAT3& fc_density_energy);
-void load_kernels(const std::string &kernel_prefix);
+cl_program load_kernels(const std::string &kernel_prefix);
 
 
 #endif /* HOST_COMMON_H_ */

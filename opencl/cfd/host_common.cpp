@@ -220,19 +220,19 @@ void compute_flux_contribution(float& density, FLOAT3& momentum, float& density_
   fc_density_energy.z = velocity.z*de_p;
 }
 
-void load_kernels(const std::string &kernel_prefix) {
+cl_program load_kernels(const std::string &kernel_prefix) {
   char *kernel_file_path = getVersionedKernelName2(kernel_prefix.c_str(),
                                                    version_string.c_str());
   size_t sourcesize;
   char *source = read_kernel(kernel_file_path, &sourcesize);
-  
+  cl_program prog; 
   // compile kernel
   cl_int err = 0;
 #ifdef USE_JIT
   const char * slist[2] = { source, 0 };
-  cl_program prog = clCreateProgramWithSource(context, 1, slist, NULL, &err);
+  prog = clCreateProgramWithSource(context, 1, slist, NULL, &err);
 #else
-  cl_program prog = clCreateProgramWithBinary(context, 1, device_list,
+  prog = clCreateProgramWithBinary(context, 1, device_list,
                                               &sourcesize, (const unsigned char**)&source, NULL, &err);
 #endif
   if(err != CL_SUCCESS) {
@@ -265,5 +265,6 @@ void load_kernels(const std::string &kernel_prefix) {
 
     kernels.push_back(kernel);
   }
+  return prog;
 }
 
