@@ -121,8 +121,6 @@ kernel_gpu_opencl_wrapper(fp* image,						// input image
 cl_kernel*         debug_kernel;
 cl_command_queue*  debug_queue;
 stamp_t*           time_stamp;
-stamp_t*          ms_info;
-signal_t*         st_info;
 	cl_platform_id *platforms = NULL;
 	cl_context_properties context_properties[3];
 	cl_device_type device_type;

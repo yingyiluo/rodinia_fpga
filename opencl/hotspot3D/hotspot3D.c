@@ -185,8 +185,6 @@ int main(int argc, char** argv)
   cl_kernel*        debug_kernel;
   cl_command_queue* debug_queue;
   stamp_t*          time_stamp;
-  stamp_t*          ms_info;
-  signal_t*         st_info;
 
 
 #ifdef EMULATOR

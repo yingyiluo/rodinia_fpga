@@ -319,7 +319,7 @@ int main(int argc, char** argv)
 
 #if NUM_DEBUG_POINTS > 0
 	//Read timer output from device
-	read_debug_all_buffers(context,program,debug_kernel,debug_queue,&time_stamp);
+	read_debug_all_buffers(cl.ctxt(),cl.program,debug_kernel,debug_queue,&time_stamp);
         print_debug(time_stamp);
         reset_debug_all_buffers(debug_kernel,debug_queue);
 #endif //NUM_DEBUG_POINTS
