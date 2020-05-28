@@ -15,12 +15,10 @@ __kernel void NearestNeighbor(__global LatLong* restrict d_locations,
 			      const    float   lat,
 			      const    float   lng)
 {
-	__local stamp_t buf[SIZE_II];
 	int i;
 	for (i=0; i<numRecords; i++)
 	{
-		monitor_ii_1(buf, i);
+		take_snapshot(0, i);
 		d_distances[i] = (float)sqrt( (lat - d_locations[i].lat) * (lat - d_locations[i].lat) + (lng - d_locations[i].lng) * (lng - d_locations[i].lng) );
 	}
-	finish_monitor_ii(buf, 0);
 } 

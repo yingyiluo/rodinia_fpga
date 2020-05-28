@@ -1,3 +1,6 @@
+#include "timer.h"
+#include "debug_defines.h"
+#include "../common/debug/manager.cl"
 #include "common.h"
 #include "kernel_common.h"
 
@@ -55,6 +58,7 @@ __kernel void compute_flux(
 
   for (int i = 0; i < nelr; ++i) {
 
+    take_snapshot(0, i);
     int j, nb;
     FLOAT3 normal; float normal_len;
     float factor;

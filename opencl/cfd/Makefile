@@ -13,6 +13,8 @@ endif
 
 all: $(EXE)
 
+COMMON_SRC = $(wildcard ../common/*.cpp)
+OPENCL_INC += -I. -I../common
 CXXFLAGS += $(KERNEL_DIM) $(OPENCL_INC)
 LDFLAGS += $(OPENCL_LIB)
 
@@ -25,16 +27,16 @@ ifeq ($(BOARD),p385a_sch_ax115)
 endif
 
 euler3d: euler3d.o host_common.o CLHelper2.o
-	$(CXX) $^ -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(COMMON_SRC) $^ -o $@ $(LDFLAGS)
 
-euler3d.o: CLHelper2.h common.h host_common.h
+euler3d.o: CLHelper2.h common.h host_common.h debug_defines.h
 
 pre_euler3d: pre_euler3d.o host_common.o CLHelper2.o
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
 pre_euler3d.o: CLHelper2.h common.h host_common.h
 
-host_common.o: host_common.h CLHelper2.h
+host_common.o: debug_defines.h host_common.h CLHelper2.h
 
 ifndef HOST_ONLY
 all: kernel
